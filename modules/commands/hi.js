@@ -1,27 +1,20 @@
-module.exports = new Object({
-  config: new Object({
-    name: "hi",
-    description: "hi",
-    usage: "{pn}",
-    author: "Rui",
-  }),
-
-  onRun: async function ({ api: _0x7B2F, event: _0xE9E8, args: _0x3C6D }) {
-    let { messageID: _0x8E6A, senderID: _0x5D72, threadID: _0xC1F9 } = _0xE9E8;
-    let _0xAF4B = _0x3C6D.join(" ");
-
-    if (!_0xAF4B) {
-      _0x7B2F.sendMessage(
-        `Hello, you said none.\n\nThreadID: ${_0xC1F9}\nSenderID: ${_0x5D72}`,
-        _0xC1F9,
-        _0x8E6A,
-      );
-    } else {
-      _0x7B2F.sendMessage(
-        `Hello, you said ${_0xAF4B}.\n\nThreadID: ${_0xC1F9}\nSenderID: ${_0x5D72}`,
-        _0xC1F9,
-        _0x8E6A,
-      );
-    }
-  },
-});
+module.exports = {
+	config: {
+			name: "hi",
+			version: "1.0",
+			author: "Jaychris Garcia",
+			countDown: 5,
+			role: 0,
+			shortDescription: "sarcasm",
+			longDescription: "sarcasm",
+			category: "reply",
+	},
+onStart: async function(){}, 
+onChat: async function({
+	event,
+	message,
+	getLang
+}) {
+	if (event.body && event.body.toLowerCase() == "hi") return message.reply("𝙩𝙖𝙣𝙜𝙞𝙣𝙖 𝙢𝙤 𝙣𝙖𝙜 𝙝𝙞 𝙜𝙖𝙜𝙤 𝙠𝙖𝙗𝙖 𝙥𝙖𝙠𝙞𝙨𝙨 𝙣𝙜𝙖 𝙤𝙧 𝙨𝙚𝙣𝙙 𝙠𝙞𝙛𝙛𝙮🖕🏻🖕🏻🖕🏻?");
+}
+};
