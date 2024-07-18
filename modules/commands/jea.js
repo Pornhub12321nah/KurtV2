@@ -1,60 +1,112 @@
 const axios = require("axios");
-
-module.exports.config = {
-  name: "jea-mean",
-  version: "1.0.0",
-  author: "Khaile | Idk",
-  role: 0,
-  usage: "{pn} [prompt]",
-  usePrefix: false,
-  cooldown: 5,
+const baseApiUrl = async () => {
+  const base = await axios.get(
+    `https://raw.githubusercontent.com/Blankid018/D1PT0/main/baseApiUrl.json`,
+  );
+  return base.data.api;
 };
 
-module.exports.onRun = async ({ api, event, args }) => {
-  try {
-    const query = args.join(" ") || "hello";
-    const data = await api.getUserInfo(event.senderID);
-    const { name } = data[event.senderID];
+const languagesMap = {
+  ar: "arabic",
+  bn: "bangla",
+  en: "english",
+  hi: "hindi",
+  id: "indonesian",
+  ne: "nepali",
+  tl: "tagalog",
+  te: "telugu",
+  ur: "urdu",
+  vi: "vietnamese"
+};
 
-    if (query) {
-      api.setMessageReaction(
-        "⏳",
-        event.messageID,
-        (err) => console.log(err),
-        true,
+// Default language set Bangla
+const shortLang = "bn"; 
+
+// You can change this language to your preferred language code
+// Example:
+// const shortLang = "hi"; // For Hindi
+// const shortLang = "en"; // For English
+
+const lang = languagesMap[shortLang] || "tagalog";
+
+module.exports.config = {
+  name: "mark",
+  version: "1.0.0",
+  role: 0,
+  author: "dipto",
+  description: "better then all Sim simi with multiple conversation",
+  guide: { en: "[message]" },
+  category: "ChatBots",
+  coolDowns: 5,
+};
+module.exports.onReply = async function ({ api, event }) {
+  if (event.type == "message_reply") {
+    const reply = event.body.toLowerCase();
+    if (isNaN(reply)) {
+      /*const response = await axios.get(
+        `${await baseApiUrl()}/baby?text=${encodeURIComponent(reply)}&language=${lang}`,
+      );*/
+      const response = await axios.get(
+        `${await baseApiUrl()}/baby?text=${encodeURIComponent(reply)}`,
       );
-      const processingMessage = await api.sendMessage(
-        `Asking Jea - Mean. Please wait a moment...`,
+      const ok = response.data.reply;
+      await api.sendMessage(
+        ok,
         event.threadID,
+        (error, info) => {
+          global.GoatBot.onReply.set(info.messageID, {
+            commandName: this.config.name,
+            type: "reply",
+            messageID: info.messageID,
+            author: event.senderID,
+            link: ok,
+          });
+        },
+        event.messageID,
       );
-
-      const apiUrl = `https://lianeapi.onrender.com/@unregistered/api/jea-mean?userName=${encodeURIComponent(name)}&key=j86bwkwo-8hako-12C&query=${encodeURIComponent(query)}`;
-      const response = await axios.get(apiUrl);
-
-      if (response.data && response.data.message) {
-        const trimmedMessage = response.data.message.trim();
-        api.setMessageReaction(
-          "✅",
-          event.messageID,
-          (err) => console.log(err),
-          true,
-        );
-        await api.sendMessage(
-          { body: trimmedMessage },
-          event.threadID,
-          event.messageID,
-        );
-
-        console.log(`Sent Jea - Mean's response to the user`);
-      } else {
-        throw new Error(`Invalid or missing response from Jea - Mean API`);
-      }
-
-      await api.unsendMessage(processingMessage.messageID);
+    }
+  }
+};
+module.exports.onStart = async function ({ api, args, event }) {
+  try {
+    const dipto = args.join(" ").toLowerCase();
+    if (!args[0]) {
+      api.sendMessage(
+        "Please provide a question to answer\n\nExample:\nbaby ki koro",
+        event.threadID,
+        event.messageID,
+      );
+      return;
+    }
+    if (dipto) {
+    /*const response = await axios.get(
+        `${await baseApiUrl()}/baby?text=${dipto}&language=${lang}`,
+      );*/
+      const response = await axios.get(
+        `${await baseApiUrl()}/baby?text=${dipto}`,
+      );
+      const mg = response.data.reply;
+      await api.sendMessage(
+        { body: mg },
+        event.threadID,
+        (error, info) => {
+          global.GoatBot.onReply.set(info.messageID, {
+            commandName: this.config.name,
+            type: "reply",
+            messageID: info.messageID,
+            author: event.senderID,
+            link: mg,
+          });
+        },
+        event.messageID,
+      );
     }
   } catch (error) {
-    console.error(`❌ | Failed to get Jea - Mean's response: ${error.message}`);
-    const errorMessage = `❌ | An error occurred. You can try typing your query again or resending it. There might be an issue with the server that's causing the problem, and it might resolve on retrying.`;
-    api.sendMessage(errorMessage, event.threadID);
+    console.error(`Failed to get an answer: ${error.message}`);
+    api.sendMessage(
+      `${error.message}.\nAn error`,
+      event.threadID,
+      event.messageID,
+    );
   }
 };
