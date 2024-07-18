@@ -1,33 +1,20 @@
-const { Hercai } = require("hercai");
-
 module.exports = {
-  config: {
-    name: "kurt",
-    version: "1.0.0",
-    description: "ask kurt",
-    usage: "{pn} [message]",
-    author: "Rui",
-    cooldown: 5,
-    usePrefix: false,
-    role: 0,
-  },
-  async onRun({ fonts, api, message, args }) {
-    const query = args.join(" ");
-
-    if (!query) {
-      message.reply("❌ | Please provide a query!");
-    } else {
-      const herc = new Hercai();
-      const info = await message.reply(`🔍 | ${query}`);
-
-      const response = await herc.question({
-        model: "v3",
-        content: `Act like Kurt, the owner of KurtV2, you are a boy from the phillipines, speak tagalog. user asked: ${query}`,
-      });
-      api.editMessage(
-        `${fonts.bold("Kurt")}\n━━━━━━━━━━━━━━━\n${response.reply}`,
-        info.messageID,
-      );
-    }
-  },
+	config: {
+			name: "haha",
+			version: "1.0",
+			author: "Jaychris Garcia",
+			countDown: 5,
+			role: 0,
+			shortDescription: "sarcasm",
+			longDescription: "sarcasm",
+			category: "reply",
+	},
+onStart: async function(){}, 
+onChat: async function({
+	event,
+	message,
+	getLang
+}) {
+	if (event.body && event.body.toLowerCase() == "hahaha") return message.reply("sanaol happy chat mo owner ko 👇https://www.facebook.com/Markey4370 masaya ka lalo sa kanya HAHA peymus payan");
+}
 };
