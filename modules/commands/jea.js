@@ -30,7 +30,7 @@ const shortLang = "bn";
 const lang = languagesMap[shortLang] || "tagalog";
 
 module.exports.config = {
-  name: "bby",
+  name: "mark",
   version: "1.0.0",
   role: 0,
   author: "dipto",
